@@ -111,7 +111,7 @@ export default function Sidebar() {
         />
       </aside>
 
-      <main className="w-full max-w-full overflow-x-hidden px-3 py-5 sm:px-6 lg:ml-72 lg:px-8 lg:py-8">
+      <main className="min-w-0 w-full overflow-x-hidden px-3 py-5 sm:px-6 lg:pl-80 lg:pr-8 lg:py-8">
         <Outlet />
       </main>
     </div>

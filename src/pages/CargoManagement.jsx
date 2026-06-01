@@ -259,7 +259,7 @@ export default function CargoManagement() {
         </div>
       )}
 
-      <section className="grid min-w-0 gap-6 xl:grid-cols-[0.85fr_1.4fr]">
+      <section className="grid min-w-0 gap-6 2xl:grid-cols-[minmax(360px,0.85fr)_minmax(0,1.4fr)]">
         <form onSubmit={handleSubmit} className="card h-fit min-w-0">
           <div className="mb-5">
             <h2 className="text-lg font-black text-slate-950">
@@ -329,7 +329,7 @@ export default function CargoManagement() {
         </form>
 
         <div className="min-w-0 space-y-6">
-          <div className="grid min-w-0 gap-4 sm:grid-cols-3">
+          <div className="grid min-w-0 gap-4 grid-cols-[repeat(auto-fit,minmax(190px,1fr))]">
             <MiniMetric
               label="Avg. Urgency"
               value={averageScores.urgency.toFixed(2)}
@@ -496,21 +496,22 @@ function ScoreBadge({ value }) {
 
 function MiniMetric({ label, value, icon }) {
   return (
-    <div className="card min-w-0">
-      <div className="flex items-center justify-between gap-3">
+    <div className="card min-w-0 overflow-hidden">
+      <div className="flex min-w-0 items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-black uppercase tracking-wide text-slate-400">
+          <p className="truncate text-xs font-black uppercase tracking-wide text-slate-400">
             {label}
           </p>
           <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
         </div>
+
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-xl">
           {icon}
         </div>
       </div>
     </div>
   );
-}
+} 
 
 function MobileCargoCard({ batch, onEdit, onDelete }) {
   return (
