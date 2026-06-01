@@ -62,9 +62,13 @@ export default function CargoManagement() {
     }));
   }
 
-  function resetForm() {
+  function clearFormOnly() {
     setForm(initialForm);
     setEditingId(null);
+  }
+
+  function resetForm() {
+    clearFormOnly();
     setErrorMessage("");
     setSuccessMessage("");
   }
@@ -106,6 +110,12 @@ export default function CargoManagement() {
       return;
     }
 
+    if (!user?.id) {
+      setSaving(false);
+      setErrorMessage("User session is not available. Please login again.");
+      return;
+    }
+
     const payload = {
       batch_name: form.batch_name.trim(),
       urgency_val: Number(form.urgency_val),
@@ -124,6 +134,7 @@ export default function CargoManagement() {
           throw error;
         }
 
+        clearFormOnly();
         setSuccessMessage("Cargo batch updated successfully.");
       } else {
         const { error } = await supabase.from("cargo_batches").insert({
@@ -135,10 +146,10 @@ export default function CargoManagement() {
           throw error;
         }
 
+        clearFormOnly();
         setSuccessMessage("Cargo batch created successfully.");
       }
 
-      resetForm();
       await fetchBatches();
     } catch (error) {
       setErrorMessage(error.message || "Failed to save cargo batch.");
@@ -155,6 +166,9 @@ export default function CargoManagement() {
       stock_site_val: batch.stock_site_val,
       shipping_cost_val: batch.shipping_cost_val
     });
+
+    setErrorMessage("");
+    setSuccessMessage("");
 
     window.scrollTo({
       top: 0,
@@ -221,8 +235,8 @@ export default function CargoManagement() {
   }, [batches]);
 
   return (
-    <div className="mx-auto max-w-7xl">
-      <div className="mb-6">
+    <div className="mx-auto w-full max-w-7xl overflow-x-hidden">
+      <div className="mb-6 min-w-0">
         <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">
           Cargo Alternatives
         </p>
@@ -245,8 +259,8 @@ export default function CargoManagement() {
         </div>
       )}
 
-      <section className="grid gap-6 xl:grid-cols-[0.85fr_1.4fr]">
-        <form onSubmit={handleSubmit} className="card h-fit">
+      <section className="grid min-w-0 gap-6 xl:grid-cols-[0.85fr_1.4fr]">
+        <form onSubmit={handleSubmit} className="card h-fit min-w-0">
           <div className="mb-5">
             <h2 className="text-lg font-black text-slate-950">
               {editingId ? "Edit Cargo Batch" : "Add New Cargo Batch"}
@@ -294,7 +308,7 @@ export default function CargoManagement() {
             />
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <button type="submit" disabled={saving} className="btn-primary">
+              <button type="submit" disabled={saving} className="btn-primary w-full">
                 {saving
                   ? "Saving..."
                   : editingId
@@ -306,7 +320,7 @@ export default function CargoManagement() {
                 type="button"
                 onClick={resetForm}
                 disabled={saving}
-                className="btn-secondary"
+                className="btn-secondary w-full"
               >
                 Reset
               </button>
@@ -314,8 +328,8 @@ export default function CargoManagement() {
           </div>
         </form>
 
-        <div className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-3">
+        <div className="min-w-0 space-y-6">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-3">
             <MiniMetric
               label="Avg. Urgency"
               value={averageScores.urgency.toFixed(2)}
@@ -333,8 +347,8 @@ export default function CargoManagement() {
             />
           </div>
 
-          <div className="card">
-            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div className="card min-w-0">
+            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h2 className="text-lg font-black text-slate-950">
                   Cargo Batch List
@@ -348,7 +362,7 @@ export default function CargoManagement() {
                 type="button"
                 onClick={fetchBatches}
                 disabled={loading}
-                className="btn-secondary"
+                className="btn-secondary w-full sm:w-auto"
               >
                 {loading ? "Refreshing..." : "Refresh"}
               </button>
@@ -373,61 +387,74 @@ export default function CargoManagement() {
                 </p>
               </div>
             ) : (
-              <div className="table-scroll">
-                <table className="min-w-[760px] w-full border-separate border-spacing-y-3">
-                  <thead>
-                    <tr className="text-left text-xs font-black uppercase tracking-wide text-slate-500">
-                      <th className="px-4">Batch Name</th>
-                      <th className="px-4">Urgency</th>
-                      <th className="px-4">Stock Site</th>
-                      <th className="px-4">Shipping Cost</th>
-                      <th className="px-4">Created</th>
-                      <th className="px-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {batches.map((batch) => (
-                      <tr key={batch.id} className="bg-slate-50">
-                        <td className="rounded-l-2xl px-4 py-4">
-                          <p className="font-black text-slate-950">
-                            {batch.batch_name}
-                          </p>
-                        </td>
-                        <td className="px-4 py-4">
-                          <ScoreBadge value={batch.urgency_val} />
-                        </td>
-                        <td className="px-4 py-4">
-                          <ScoreBadge value={batch.stock_site_val} />
-                        </td>
-                        <td className="px-4 py-4">
-                          <ScoreBadge value={batch.shipping_cost_val} />
-                        </td>
-                        <td className="px-4 py-4 text-sm font-semibold text-slate-500">
-                          {formatDate(batch.created_at)}
-                        </td>
-                        <td className="rounded-r-2xl px-4 py-4">
-                          <div className="flex justify-end gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleEdit(batch)}
-                              className="rounded-xl bg-blue-100 px-3 py-2 text-xs font-black text-blue-700 transition hover:bg-blue-200"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDelete(batch)}
-                              className="rounded-xl bg-red-100 px-3 py-2 text-xs font-black text-red-700 transition hover:bg-red-200"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
+              <>
+                <div className="hidden md:block table-scroll">
+                  <table className="min-w-[760px] w-full border-separate border-spacing-y-3">
+                    <thead>
+                      <tr className="text-left text-xs font-black uppercase tracking-wide text-slate-500">
+                        <th className="px-4">Batch Name</th>
+                        <th className="px-4">Urgency</th>
+                        <th className="px-4">Stock Site</th>
+                        <th className="px-4">Shipping Cost</th>
+                        <th className="px-4">Created</th>
+                        <th className="px-4 text-right">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {batches.map((batch) => (
+                        <tr key={batch.id} className="bg-slate-50">
+                          <td className="rounded-l-2xl px-4 py-4">
+                            <p className="font-black text-slate-950">
+                              {batch.batch_name}
+                            </p>
+                          </td>
+                          <td className="px-4 py-4">
+                            <ScoreBadge value={batch.urgency_val} />
+                          </td>
+                          <td className="px-4 py-4">
+                            <ScoreBadge value={batch.stock_site_val} />
+                          </td>
+                          <td className="px-4 py-4">
+                            <ScoreBadge value={batch.shipping_cost_val} />
+                          </td>
+                          <td className="px-4 py-4 text-sm font-semibold text-slate-500">
+                            {formatDate(batch.created_at)}
+                          </td>
+                          <td className="rounded-r-2xl px-4 py-4">
+                            <div className="flex justify-end gap-2">
+                              <button
+                                type="button"
+                                onClick={() => handleEdit(batch)}
+                                className="rounded-xl bg-blue-100 px-3 py-2 text-xs font-black text-blue-700 transition hover:bg-blue-200"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDelete(batch)}
+                                className="rounded-xl bg-red-100 px-3 py-2 text-xs font-black text-red-700 transition hover:bg-red-200"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="space-y-3 md:hidden">
+                  {batches.map((batch) => (
+                    <MobileCargoCard
+                      key={batch.id}
+                      batch={batch}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -442,7 +469,13 @@ function ScoreSelect({ id, label, value, onChange }) {
       <label htmlFor={id} className="label">
         {label}
       </label>
-      <select id={id} name={id} value={value} onChange={onChange} className="input">
+      <select
+        id={id}
+        name={id}
+        value={value}
+        onChange={onChange}
+        className="input"
+      >
         {scoreOptions.map((score) => (
           <option key={score} value={score}>
             {score}
@@ -463,18 +496,73 @@ function ScoreBadge({ value }) {
 
 function MiniMetric({ label, value, icon }) {
   return (
-    <div className="card">
+    <div className="card min-w-0">
       <div className="flex items-center justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-black uppercase tracking-wide text-slate-400">
             {label}
           </p>
           <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
         </div>
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-xl">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-xl">
           {icon}
         </div>
       </div>
+    </div>
+  );
+}
+
+function MobileCargoCard({ batch, onEdit, onDelete }) {
+  return (
+    <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+      <div className="flex min-w-0 flex-col gap-4">
+        <div className="min-w-0">
+          <p className="text-xs font-black uppercase tracking-wide text-slate-400">
+            Batch Name
+          </p>
+          <h3 className="mt-1 break-words text-base font-black text-slate-950">
+            {batch.batch_name}
+          </h3>
+          <p className="mt-1 text-xs font-semibold text-slate-500">
+            {formatDate(batch.created_at)}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <MobileScoreBox label="Urgency" value={batch.urgency_val} />
+          <MobileScoreBox label="Stock" value={batch.stock_site_val} />
+          <MobileScoreBox label="Cost" value={batch.shipping_cost_val} />
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => onEdit(batch)}
+            className="rounded-xl bg-blue-100 px-3 py-2.5 text-xs font-black text-blue-700 transition hover:bg-blue-200"
+          >
+            Edit
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onDelete(batch)}
+            className="rounded-xl bg-red-100 px-3 py-2.5 text-xs font-black text-red-700 transition hover:bg-red-200"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MobileScoreBox({ label, value }) {
+  return (
+    <div className="rounded-2xl bg-white p-3 ring-1 ring-slate-200">
+      <p className="text-[10px] font-black uppercase text-slate-400">
+        {label}
+      </p>
+      <p className="mt-1 text-lg font-black text-slate-950">{value}</p>
     </div>
   );
 }

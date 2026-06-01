@@ -50,8 +50,8 @@ export default function Sidebar() {
     ].join(" ");
 
   return (
-    <div className="min-h-screen bg-slate-50/60">
-      <header className="sticky top-0 z-40 border-b border-white/70 bg-white/90 px-4 py-3 shadow-sm backdrop-blur lg:hidden">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50/60">
+      <header className="sticky left-0 right-0 top-0 z-40 w-full max-w-full border-b border-white/70 bg-white/90 px-3 py-3 shadow-sm backdrop-blur lg:hidden">
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -111,7 +111,7 @@ export default function Sidebar() {
         />
       </aside>
 
-      <main className="px-4 py-6 sm:px-6 lg:ml-72 lg:px-8 lg:py-8">
+      <main className="w-full max-w-full overflow-x-hidden px-3 py-5 sm:px-6 lg:ml-72 lg:px-8 lg:py-8">
         <Outlet />
       </main>
     </div>
