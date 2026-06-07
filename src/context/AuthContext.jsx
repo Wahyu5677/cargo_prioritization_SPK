@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
           setUser(data.session?.user ?? null);
         }
       } catch (error) {
-        console.error("Failed to load Supabase session:", error.message);
+        console.error("Gagal memuat sesi Supabase:", error.message);
         if (isMounted) {
           setSession(null);
           setUser(null);
@@ -69,7 +69,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       return {
         success: false,
-        message: error.message || "Login failed. Please check your credentials."
+        message: error.message || "Login gagal. Periksa kembali email dan kata sandi Anda."
       };
     } finally {
       setAuthActionLoading(false);
@@ -100,7 +100,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       return {
         success: false,
-        message: error.message || "Registration failed. Please try again."
+        message: error.message || "Registrasi gagal. Silakan coba lagi."
       };
     } finally {
       setAuthActionLoading(false);
@@ -124,7 +124,7 @@ export function AuthProvider({ children }) {
       return {
         success: false,
         message:
-          error.message || "Failed to send password reset email. Please try again."
+          "Gagal mengirim email reset kata sandi. Silakan coba lagi."
       };
     } finally {
       setAuthActionLoading(false);
@@ -146,7 +146,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       return {
         success: false,
-        message: error.message || "Logout failed. Please try again."
+        message: error.message || "Logout gagal. Silakan coba lagi."
       };
     } finally {
       setAuthActionLoading(false);
@@ -175,7 +175,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth must be used inside AuthProvider.");
+    throw new Error("useAuth harus digunakan di dalam AuthProvider.");
   }
 
   return context;

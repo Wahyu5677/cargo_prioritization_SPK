@@ -29,7 +29,7 @@ export default function ResetPassword() {
         }
       } catch (error) {
         if (isMounted) {
-          setErrorMessage(error.message || "Failed to verify reset session.");
+          setErrorMessage(error.message || "Gagal memverifikasi sesi reset.");
           setHasSession(false);
         }
       } finally {
@@ -60,17 +60,17 @@ export default function ResetPassword() {
     setSuccessMessage("");
 
     if (!password.trim()) {
-      setErrorMessage("New password is required.");
+      setErrorMessage("Kata sandi baru wajib diisi.");
       return;
     }
 
     if (password.length < 6) {
-      setErrorMessage("Password must be at least 6 characters.");
+      setErrorMessage("Kata sandi minimal 6 karakter.");
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage("Password confirmation does not match.");
+      setErrorMessage("Konfirmasi kata sandi tidak cocok.");
       return;
     }
 
@@ -85,21 +85,21 @@ export default function ResetPassword() {
 
       await supabase.auth.signOut();
 
-      setSuccessMessage("Password updated successfully.");
+      setSuccessMessage("Kata sandi berhasil diperbarui.");
 
       setTimeout(() => {
         navigate("/login", {
           replace: true,
           state: {
             successMessage:
-              "Password updated successfully. Please sign in with your new password."
+              "Kata sandi berhasil diperbarui. Silakan masuk dengan kata sandi baru Anda."
           }
         });
       }, 900);
     } catch (error) {
       setErrorMessage(
         error.message ||
-          "Failed to update password. Please request a new reset link."
+          "Gagal memperbarui kata sandi. Silakan minta tautan reset baru."
       );
     } finally {
       setSaving(false);
@@ -115,23 +115,23 @@ export default function ResetPassword() {
           </div>
 
           <h1 className="text-3xl font-black tracking-tight text-slate-950">
-            Reset Password
+            Reset Kata Sandi
           </h1>
 
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Enter your new password to recover access to your account.
+            Masukkan kata sandi baru untuk memulihkan akses akun Anda.
           </p>
         </div>
 
         {checkingSession ? (
           <div className="rounded-2xl bg-slate-50 px-4 py-5 text-center text-sm font-semibold text-slate-600">
-            Checking reset session...
+            Memeriksa sesi reset...
           </div>
         ) : !hasSession ? (
           <div className="space-y-4">
             <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-              Reset session is missing or expired. Please request a new password
-              reset link.
+              Sesi reset tidak tersedia atau kedaluwarsa. Silakan minta tautan
+              reset kata sandi baru.
             </div>
 
             <button
@@ -139,7 +139,7 @@ export default function ResetPassword() {
               onClick={() => navigate("/login", { replace: true })}
               className="btn-primary w-full"
             >
-              Back to Login
+              Kembali ke Login
             </button>
           </div>
         ) : (
@@ -159,7 +159,7 @@ export default function ResetPassword() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label htmlFor="password" className="label">
-                  New Password
+                  Kata Sandi Baru
                 </label>
                 <input
                   id="password"
@@ -174,7 +174,7 @@ export default function ResetPassword() {
 
               <div>
                 <label htmlFor="confirmPassword" className="label">
-                  Confirm New Password
+                  Konfirmasi Kata Sandi Baru
                 </label>
                 <input
                   id="confirmPassword"
@@ -188,7 +188,7 @@ export default function ResetPassword() {
               </div>
 
               <button type="submit" disabled={saving} className="btn-primary w-full">
-                {saving ? "Updating Password..." : "Update Password"}
+                {saving ? "Memperbarui Kata Sandi..." : "Perbarui Kata Sandi"}
               </button>
             </form>
           </>

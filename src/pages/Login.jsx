@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 export default function Login() {
   const { login, register, sendPasswordReset, authActionLoading } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,24 +20,26 @@ export default function Login() {
   const [successMessage, setSuccessMessage] = useState(
     location.state?.successMessage || ""
   );
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const redirectTo = location.state?.from?.pathname || "/";
 
   const modeContent = {
     login: {
-      title: "Welcome Back",
-      subtitle: "Sign in with your registered email and password.",
-      button: "Sign In"
+      title: "Selamat Datang Kembali",
+      subtitle: "Masuk dengan email dan kata sandi yang sudah terdaftar.",
+      button: "Masuk"
     },
     register: {
-      title: "Create Account",
-      subtitle: "Register a new account to access the cargo priority system.",
-      button: "Create Account"
+      title: "Buat Akun",
+      subtitle: "Daftarkan akun baru untuk mengakses sistem prioritas kargo.",
+      button: "Buat Akun"
     },
     forgot: {
-      title: "Forgot Password",
-      subtitle: "Enter your email and we will send a password reset link.",
-      button: "Send Reset Link"
+      title: "Lupa Kata Sandi",
+      subtitle: "Masukkan email Anda dan kami akan mengirim tautan reset kata sandi.",
+      button: "Kirim Tautan Reset"
     }
   };
 
@@ -48,6 +52,8 @@ export default function Login() {
       password: "",
       confirmPassword: ""
     });
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   }
 
   function handleChange(event) {
@@ -99,6 +105,7 @@ export default function Login() {
       const result = await login(form.email.trim(), form.password);
 
       if (result.success) {
+        showToast("Berhasil masuk.", "success");
         navigate(redirectTo, { replace: true });
       } else {
         setErrorMessage(result.message);
@@ -154,21 +161,21 @@ export default function Login() {
               🚚
             </div>
             <h1 className="text-4xl font-black leading-tight">
-              Project Cargo Delivery Prioritization System
+              Sistem Prioritas Pengiriman Kargo Proyek
             </h1>
             <p className="mt-5 text-base leading-8 text-blue-100">
-              Secure decision support dashboard for ranking project cargo
-              deliveries using the Weighted Product method.
+              Dashboard sistem pendukung keputusan yang aman untuk menentukan
+              peringkat pengiriman kargo proyek menggunakan metode Weighted Product.
             </p>
           </div>
 
           <div className="rounded-3xl bg-white/10 p-5 backdrop-blur">
             <p className="text-sm font-bold uppercase tracking-wide text-blue-100">
-              DECISION SUPPORT SYSTEM
+              SISTEM PENDUKUNG KEPUTUSAN
             </p>
             <p className="mt-2 text-sm leading-6 text-white/90">
-              Evaluate urgency, remaining site stock, and shipping cost to
-              generate transparent delivery schedules.
+              Evaluasi urgency, sisa stok di site, dan shipping cost untuk
+              menghasilkan jadwal pengiriman yang transparan.
             </p>
           </div>
         </div>
@@ -199,7 +206,7 @@ export default function Login() {
                     : "text-slate-500 hover:text-slate-900"
                 }`}
               >
-                Login
+                Masuk
               </button>
 
               <button
@@ -211,7 +218,7 @@ export default function Login() {
                     : "text-slate-500 hover:text-slate-900"
                 }`}
               >
-                Register
+                Daftar
               </button>
 
               <button
@@ -223,7 +230,7 @@ export default function Login() {
                     : "text-slate-500 hover:text-slate-900"
                 }`}
               >
-                Forgot
+                Lupa
               </button>
             </div>
 
@@ -242,7 +249,7 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label htmlFor="email" className="label">
-                  Email Address
+                  Alamat Email
                 </label>
                 <input
                   id="email"
@@ -259,38 +266,64 @@ export default function Login() {
               {mode !== "forgot" && (
                 <div>
                   <label htmlFor="password" className="label">
-                    Password
+                    Kata Sandi
                   </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={form.password}
-                    onChange={handleChange}
-                    className="input"
-                    placeholder="••••••••"
-                    autoComplete={
-                      mode === "login" ? "current-password" : "new-password"
-                    }
-                  />
+                  <div className="relative">
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      value={form.password}
+                      onChange={handleChange}
+                      className="input pr-12"
+                      placeholder="••••••••"
+                      autoComplete={
+                        mode === "login" ? "current-password" : "new-password"
+                      }
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((current) => !current)}
+                      className="absolute inset-y-0 right-0 flex items-center px-3 text-sm font-semibold text-slate-500 hover:text-slate-800"
+                      aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+                    >
+                      {showPassword ? "👁️" : "😑"}
+                    </button>
+                  </div>
                 </div>
               )}
 
               {mode === "register" && (
                 <div>
                   <label htmlFor="confirmPassword" className="label">
-                    Confirm Password
+                    Konfirmasi Kata Sandi
                   </label>
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    value={form.confirmPassword}
-                    onChange={handleChange}
-                    className="input"
-                    placeholder="••••••••"
-                    autoComplete="new-password"
-                  />
+                  <div className="relative">
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      className="input pr-12"
+                      placeholder="••••••••"
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword((current) => !current)
+                      }
+                      className="absolute inset-y-0 right-0 flex items-center px-3 text-sm font-semibold text-slate-500 hover:text-slate-800"
+                      aria-label={
+                        showConfirmPassword
+                          ? "Sembunyikan konfirmasi kata sandi"
+                          : "Tampilkan konfirmasi kata sandi"
+                      }
+                    >
+                      {showConfirmPassword ? "👁️" : "😑"}
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -299,29 +332,28 @@ export default function Login() {
                 disabled={authActionLoading}
                 className="btn-primary w-full"
               >
-                {authActionLoading ? "Processing..." : modeContent[mode].button}
+                {authActionLoading ? "Memproses..." : modeContent[mode].button}
               </button>
             </form>
 
             <div className="mt-6 rounded-2xl bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-500">
               {mode === "login" && (
                 <p>
-                  Do not have an account? Click Register. Forgot your password?
-                  Click Forgot.
+                  Belum punya akun? Klik Daftar. Lupa kata sandi? Klik Lupa.
                 </p>
               )}
 
               {mode === "register" && (
                 <p>
-                  After registration, you may need to confirm your email before
-                  signing in.
+                  Setelah pendaftaran, Anda mungkin perlu konfirmasi email
+                  sebelum masuk.
                 </p>
               )}
 
               {mode === "forgot" && (
                 <p>
-                  The reset link will redirect you to the password reset page in
-                  this application.
+                  Tautan reset akan mengarahkan Anda ke halaman reset kata
+                  sandi di aplikasi ini.
                 </p>
               )}
             </div>

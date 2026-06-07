@@ -45,7 +45,7 @@ export default function Dashboard() {
       setTotalBatches(countResult.count || 0);
       setLatestBatches(latestResult.data || []);
     } catch (error) {
-      setErrorMessage(error.message || "Failed to load dashboard data.");
+      setErrorMessage(error.message || "Gagal memuat data dashboard.");
     } finally {
       setLoading(false);
     }
@@ -60,12 +60,12 @@ export default function Dashboard() {
     <div className="mx-auto max-w-7xl">
       <div className="mb-6">
         <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">
-          Decision Support System
+          Sistem Pendukung Keputusan
         </p>
-        <h1 className="page-title">Dashboard Overview</h1>
+        <h1 className="page-title">Ringkasan Dashboard</h1>
         <p className="page-subtitle">
-          Monitor cargo alternatives, criteria weights, and the current decision
-          model used to prioritize delivery schedules.
+          Pantau alternatif kargo, bobot kriteria, dan model keputusan saat ini
+          untuk menentukan prioritas jadwal pengiriman.
         </p>
       </div>
 
@@ -81,27 +81,27 @@ export default function Dashboard() {
         <>
           <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <OverviewCard
-              title="Total Cargo Batches"
+              title="Total Batch Kargo"
               value={totalBatches}
-              description="Alternatives owned by your account"
+              description="Alternatif yang dimiliki akun Anda"
               icon="📦"
             />
             <OverviewCard
-              title="Active Criteria"
+              title="Kriteria Aktif"
               value={criteria.length}
-              description="Urgency, stock, and cost factors"
+              description="Faktor urgency, stok, dan biaya"
               icon="⚖️"
             />
             <OverviewCard
-              title="Total Weight"
+              title="Total Bobot"
               value={totalWeight}
-              description="Used for WP normalization"
+              description="Digunakan untuk normalisasi WP"
               icon="🧮"
             />
             <OverviewCard
               title="Method"
               value="WP"
-              description="Weighted Product calculation"
+              description="Perhitungan Weighted Product"
               icon="🚀"
             />
           </section>
@@ -109,11 +109,11 @@ export default function Dashboard() {
           <section className="mt-6 grid gap-6 xl:grid-cols-[1fr_1.2fr]">
             <div className="card">
               <h2 className="text-lg font-black text-slate-950">
-                Current Criteria Weights
+                Bobot Kriteria Saat Ini
               </h2>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                These weights are normalized during the WP calculation. Cost
-                criteria use negative exponents.
+                Bobot ini dinormalisasi saat perhitungan WP. Kriteria cost
+                menggunakan eksponen negatif.
               </p>
 
               <div className="mt-5 space-y-4">
@@ -149,7 +149,7 @@ export default function Dashboard() {
                         />
                       </div>
                       <p className="mt-2 text-xs font-semibold text-slate-500">
-                        Normalized share: {percentage}%
+                        Porsi normalisasi: {percentage}%
                       </p>
                     </div>
                   );
@@ -159,35 +159,35 @@ export default function Dashboard() {
 
             <div className="card">
               <h2 className="text-lg font-black text-slate-950">
-                System Purpose
+                Tujuan Sistem
               </h2>
               <div className="mt-4 space-y-4 text-sm leading-7 text-slate-600">
                 <p>
-                  This application helps logistics teams determine which project
-                  cargo batches should be delivered first when there are
-                  multiple competing factors.
+                  Aplikasi ini membantu tim logistik menentukan batch kargo
+                  project mana yang harus dikirim lebih dulu saat ada banyak
+                  faktor yang saling bersaing.
                 </p>
                 <p>
-                  The Weighted Product method multiplies each alternative score
-                  with normalized weighted exponents. Benefit criteria increase
-                  priority, while cost criteria reduce priority through negative
-                  exponents.
+                  Metode Weighted Product mengalikan skor tiap alternatif
+                  dengan eksponen bobot yang sudah dinormalisasi. Kriteria
+                  benefit menaikkan prioritas, sedangkan kriteria cost
+                  menurunkan prioritas melalui eksponen negatif.
                 </p>
                 <p>
-                  The final ranking is automatically converted into practical
-                  delivery groups: Day 1 for highest priority, Day 2 for medium
-                  priority, and Day 3 for the remaining cargo.
+                  Ranking akhir otomatis diubah menjadi kelompok pengiriman
+                  praktis: Hari 1 untuk prioritas tertinggi, Hari 2 untuk
+                  prioritas menengah, dan Hari 3 untuk sisa kargo.
                 </p>
               </div>
 
               <div className="mt-6 rounded-3xl bg-gradient-to-br from-slate-950 to-blue-900 p-5 text-white">
                 <p className="text-sm font-black uppercase tracking-wide text-blue-100">
-                  Latest Cargo Batches
+                  Batch Kargo Terbaru
                 </p>
 
                 {latestBatches.length === 0 ? (
                   <p className="mt-3 text-sm text-slate-300">
-                    No cargo batches added yet.
+                    Belum ada batch kargo yang ditambahkan.
                   </p>
                 ) : (
                   <div className="mt-4 space-y-3">
@@ -198,7 +198,7 @@ export default function Dashboard() {
                       >
                         <p className="font-bold">{batch.batch_name}</p>
                         <p className="mt-1 text-xs text-blue-100">
-                          Urgency {batch.urgency_val} · Stock{" "}
+                          Urgency {batch.urgency_val} · Stok{" "}
                           {batch.stock_site_val} · Cost{" "}
                           {batch.shipping_cost_val}
                         </p>

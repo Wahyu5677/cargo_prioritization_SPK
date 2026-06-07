@@ -1,27 +1,28 @@
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 const navItems = [
   {
     to: "/",
-    label: "Dashboard",
+    label: "Dasbor",
     icon: "📊",
     end: true
   },
   {
     to: "/criteria",
-    label: "Criteria",
+    label: "Kriteria",
     icon: "⚖️"
   },
   {
     to: "/cargo",
-    label: "Cargo Management",
+    label: "Manajemen Kargo",
     icon: "📦"
   },
   {
     to: "/schedule",
-    label: "Process & Schedule",
+    label: "Proses & Jadwal",
     icon: "🚚"
   }
 ];
@@ -29,15 +30,17 @@ const navItems = [
 export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, logout, authActionLoading } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   async function handleLogout() {
     const result = await logout();
 
     if (result.success) {
+      showToast("Berhasil logout.", "success");
       navigate("/login", { replace: true });
     } else {
-      alert(result.message);
+      showToast(result.message, "error");
     }
   }
 
@@ -57,7 +60,7 @@ export default function Sidebar() {
             type="button"
             onClick={() => setMobileOpen(true)}
             className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xl shadow-sm"
-            aria-label="Open navigation"
+            aria-label="Buka navigasi"
           >
             ☰
           </button>
@@ -75,7 +78,7 @@ export default function Sidebar() {
             disabled={authActionLoading}
             className="rounded-xl bg-red-50 px-3 py-2 text-xs font-black text-red-600"
           >
-            Logout
+            Keluar
           </button>
         </div>
       </header>
@@ -84,7 +87,7 @@ export default function Sidebar() {
         <div className="fixed inset-0 z-50 lg:hidden">
           <button
             type="button"
-            aria-label="Close navigation overlay"
+            aria-label="Tutup overlay navigasi"
             className="absolute inset-0 bg-slate-950/40"
             onClick={() => setMobileOpen(false)}
           />
@@ -132,10 +135,10 @@ function SidebarContent({
           🚢
         </div>
         <h1 className="text-xl font-black leading-tight">
-          Cargo Delivery Priority
+          Prioritas Pengiriman Kargo
         </h1>
         <p className="mt-2 text-sm leading-6 text-blue-100">
-          SPK using Weighted Product method.
+          SPK menggunakan metode Weighted Product.
         </p>
       </div>
 
@@ -156,10 +159,10 @@ function SidebarContent({
 
       <div className="mt-auto rounded-3xl border border-slate-200 bg-slate-50 p-4">
         <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
-          Signed in as
+          Masuk sebagai
         </p>
         <p className="mt-1 truncate text-sm font-bold text-slate-800">
-          {user?.email || "Authenticated User"}
+          {user?.email || "Pengguna Terautentikasi"}
         </p>
 
         <button
@@ -168,7 +171,7 @@ function SidebarContent({
           disabled={logoutLoading}
           className="mt-4 w-full rounded-2xl bg-red-600 px-4 py-3 text-sm font-black text-white transition hover:bg-red-700 disabled:bg-red-300"
         >
-          {logoutLoading ? "Logging out..." : "Logout"}
+          {logoutLoading ? "Sedang keluar..." : "Keluar"}
         </button>
       </div>
     </div>
